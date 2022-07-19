@@ -94,7 +94,7 @@ class plot_box_via_neurons:
                 self.model = self.net_(NEURONS)
                 history = self.model.fit(*args,**kwargs)
                 # METRICS
-                y_pred_ = np.ravel(self.model.(self.input_scaler.transform(self.full_ds[0])))     
+                y_pred_ = np.ravel(self.model(self.input_scaler.transform(self.full_ds[0])))     
                 y_true_ = np.ravel(self.full_ds[1])                                                     
                 wynik = measures.pearsonr(y_pred_, y_true_)[0] #.round(2)
                 lista.append(wynik)
