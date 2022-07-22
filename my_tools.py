@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import scipy.stats as measures
 import numpy as np
-
+from copy import deepcopy
 
 class hold_data:
     """
@@ -40,7 +40,10 @@ class hold_data:
 
 class plot_train_via_neurons:
     def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
-        assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
+        try:
+            assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
+        except:
+            assert isinstance(NET, tf.keras.Model), "No keras model"
         self.net_ = NET
         self.input_scaler = scaler
         self.scaler_out = scaler_out
@@ -128,13 +131,21 @@ class checker_dist_box(plot_box_via_neurons):
     def compute(self,*args, **kwargs):
         print(kwargs)
         if "neurons" in kwargs.keys():
-            neurons = kwargs.pop("neurons")
-            self.model = self.net_(neurons)
+            _neurons = kwargs.pop("neurons")
         else:
-            self.model = self.net_         # set n neurons   
+            _neurons = False             
+         
         lista = []
         plt.figure(figsize=(8, 3.5))
         for _ in range(10):
+            
+            if _neurons:
+                self.model = self.net_(_neurons)     # set n neurons 
+            else:
+                self.model = self.net_
+
+            print(self.model.layers[1].get_weights())
+
             self.model.fit(*args,**kwargs)
             y_pred_ = self.model(self.input_scaler.transform(self.full_ds[0])) 
             y_pred_ = np.ravel(self.scaler_out.inverse_transform(y_pred_))     
@@ -142,6 +153,10 @@ class checker_dist_box(plot_box_via_neurons):
             wynik = measures.pearsonr(y_pred_, y_true_)[0] #.round(2)
             lista.append(wynik)
             tf.keras.backend.clear_session()
+            tf.keras.backend.reset_uids()
+
+            print(self.model.layers[1].get_weights())
+
         print(
             lista, 
             'średnia: ', np.mean(lista).round(3), 
