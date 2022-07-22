@@ -39,10 +39,11 @@ class hold_data:
             pickle.dump(self.list_, f)
 
 class plot_train_via_neurons:
-    def __init__(self, NET:tf.keras.Model, scaler, full_ds: tuple):
+    def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
         assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
         self.net_ = NET
         self.input_scaler = scaler
+        self.scaler_out = scaler_out
         self.full_ds = full_ds
 
     def _struc(self):
@@ -58,7 +59,8 @@ class plot_train_via_neurons:
                 self.model = self.net_(NEURONS)
                 history = self.model.fit(*args,**kwargs)
                 # METRICS
-                y_pred_ = np.ravel(self.model(self.input_scaler.transform(self.full_ds[0])))     
+                y_pred_ = self.model(self.input_scaler.transform(self.full_ds[0]))
+                y_pred_ = np.ravel(self.scaler_out.inverse_transform(y_pred_))     
                 y_true_ = np.ravel(self.full_ds[1])                                                     
                 wynik = measures.pearsonr(y_pred_, y_true_)[0] #.round(2)
                 lista.append(wynik)
@@ -73,10 +75,14 @@ class plot_train_via_neurons:
 
 
 class plot_box_via_neurons:
-    def __init__(self, NET:tf.keras.Model, scaler, full_ds: tuple):
-        assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
+    def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
+        try:
+            assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
+        except:
+            assert isinstance(NET, tf.keras.Model), "No keras model"
         self.net_ = NET
         self.input_scaler = scaler
+        self.scaler_out = scaler_out
         self.full_ds = full_ds
         self.ttt = []
         self.zzz = []
@@ -94,7 +100,8 @@ class plot_box_via_neurons:
                 self.model = self.net_(NEURONS)
                 history = self.model.fit(*args,**kwargs)
                 # METRICS
-                y_pred_ = np.ravel(self.model(self.input_scaler.transform(self.full_ds[0])))     
+                y_pred_ = self.model(self.input_scaler.transform(self.full_ds[0]))
+                y_pred_ = np.ravel(self.scaler_out.inverse_transform(y_pred_))
                 y_true_ = np.ravel(self.full_ds[1])                                                     
                 wynik = measures.pearsonr(y_pred_, y_true_)[0] #.round(2)
                 lista.append(wynik)
@@ -115,17 +122,22 @@ class plot_box_via_neurons:
 
 #warning, manual set n neurons,
 class checker_dist_box(plot_box_via_neurons):
-    def __init__(self,NET, scaler, full_ds):
-        super().__init__(NET, scaler, full_ds)
+    def __init__(self,NET, scaler, scaler_out, full_ds):
+        super().__init__(NET, scaler, scaler_out, full_ds)
 
     def compute(self,*args, **kwargs):
-        neurons = kwargs.pop("neurons")  
+        print(kwargs)
+        if "neurons" in kwargs.keys():
+            neurons = kwargs.pop("neurons")
+            self.model = self.net_(neurons)
+        else:
+            self.model = self.net_         # set n neurons   
         lista = []
         plt.figure(figsize=(8, 3.5))
         for _ in range(10):
-            self.model = self.net_(neurons)         # set n neurons
             self.model.fit(*args,**kwargs)
-            y_pred_ = np.ravel(self.model.predict(self.input_scaler.transform(self.full_ds[0])))     
+            y_pred_ = self.model(self.input_scaler.transform(self.full_ds[0])) 
+            y_pred_ = np.ravel(self.scaler_out.inverse_transform(y_pred_))     
             y_true_ = np.ravel(self.full_ds[1])                                                     
             wynik = measures.pearsonr(y_pred_, y_true_)[0] #.round(2)
             lista.append(wynik)
