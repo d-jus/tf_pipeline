@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import scipy.stats as measures
 import numpy as np
-from copy import deepcopy
 
 class hold_data:
     """
@@ -17,17 +16,23 @@ class hold_data:
     def __init__(self):
         self.list_: list = []
 
-    def add_out(self, NET,MAX_MSE,TUNER_KERAS,OTHER, EXTRAS1, EXTRAS2) -> list:
+    def add_out(self, model, history) -> list:
         """
-        'NET','MAX_MSE','TUNER_KERAS','OTHER', 'EXTRAS#1','EXTRAS#2'
+        model: tf.Model
+        history: hisotory of fiting model
+
+        Returns: list
         """
-        self.list_.append([NET,MAX_MSE,TUNER_KERAS,OTHER, EXTRAS1, EXTRAS2])
-        print('Added: ',
-            [NET,MAX_MSE,TUNER_KERAS,OTHER, EXTRAS1, EXTRAS2]
-            )
+        self.list_.append([
+            round(history.history['loss'][-1],3),
+            model.layers[1].kernel_initializer.__class__.__name__,
+            model.layers[1].activation.__name__,
+            model.optimizer.__class__.__name__
+        ])
+        print('Added:', self.list_[-1])
     
     def _make_pd(self) -> None:
-        self.pd_ = pd.DataFrame(self.list_, columns = ['NET','MAX_MSE','TUNER_KERAS','OTHER', 'EXTRAS#1','EXTRAS#2'])
+        self.pd_ = pd.DataFrame(self.list_, columns = ['loss','ker_ini','act_fn','opt'])
         return self.pd_
 
     def print_(self) -> None:
@@ -37,6 +42,7 @@ class hold_data:
         self._make_pd().to_excel(f'{name}.xlsx')
         with open(f'{name}.pickle', 'wb') as f:
             pickle.dump(self.list_, f)
+
 
 class plot_train_via_neurons:
     def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
