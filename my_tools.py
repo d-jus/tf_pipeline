@@ -7,7 +7,7 @@ from datetime import datetime
 import scipy.stats as measures
 import numpy as np
 
-class hold_data:
+class Hold_data:
     """
     add_out:
     print_:
@@ -44,7 +44,7 @@ class hold_data:
             pickle.dump(self.list_, f)
 
 
-class plot_train_via_neurons:
+class Plot_train_via_neurons:
     def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
         try:
             assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
@@ -83,7 +83,7 @@ class plot_train_via_neurons:
             plt.savefig('{}'.format(current_time))
 
 
-class plot_box_via_neurons:
+class Plot_box_via_neurons:
     def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
         try:
             assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
@@ -130,7 +130,7 @@ class plot_box_via_neurons:
 
 
 #warning, manual set n neurons,
-class checker_dist_box(plot_box_via_neurons):
+class Checker_dist_box(Plot_box_via_neurons):
     def __init__(self,NET, scaler, scaler_out, full_ds):
         super().__init__(NET, scaler, scaler_out, full_ds)
 

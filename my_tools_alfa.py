@@ -2,11 +2,10 @@ import pickle
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from datetime import datetime
 import scipy.stats as measures
 import numpy as np
 
-class plot_box_via_neurons:
+class Plot_box_via_neurons:
     def __init__(self, NET:tf.keras.Model, scaler, scaler_out, full_ds: tuple):
         try:
             assert isinstance(NET(1), tf.keras.Model), "No keras model"      #added 1 to NET in oder to check return by fun type
@@ -33,7 +32,7 @@ class plot_box_via_neurons:
 
 
 #temp solution
-class checker_dist_box(plot_box_via_neurons):
+class Checker_dist_box(Plot_box_via_neurons):
     def __init__(self, scaler, scaler_out, full_ds):
         self.input_scaler = scaler
         self.scaler_out = scaler_out
@@ -80,7 +79,7 @@ class checker_dist_box(plot_box_via_neurons):
     def plot_box(self):
         plt.boxplot(self.ttt, labels = self.zzz) 
 
-class num1(checker_dist_box):
+class Num1(Checker_dist_box):
     """
     Inicjalizacja: LeCuna
     Funkcja aktywacji: SELU
