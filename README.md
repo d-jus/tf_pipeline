@@ -4,5 +4,8 @@ Celem zadania jest porównanie wyników uzyskanych w roku 2018 w środowisku Mat
 **etap 2)** transfer współczynników W i b (wag i obciążeń) `do środowiska Keras`<br><br>
 Każdorazowo wyniki predykcji były weryfikowane wzglądem pierwotnych wartości (sieć z 2018). Wykorzystanie `TF` ma na celu użycie technik opracowanych dla potrzeb głębokiego uczenia. Kryterium wyboru nowej sieci będzie `MSE_new > MSE_old` (przy założeniu prawidłowo uzyskanego modelu tj. braku przetrenowania itp.). <br><br>
 
+# O SIECI
+Początki powstania sieci oraz jest kształt wynikają z potrzeb przemysłu wydobywczego. Idea polega na ocenie warunków panujących w wyrobisku górniczym oraz przypisaniu im odpowiednich wartości. Dane te stanowią jedną próbę (rekord). Wartością oczekiwaną jest wskaźnik powiązany z obserwowaną w warunkach dołowych, predyspozycją górotworu do utraty stateczności.
+
 ## UŻYCIE
 Obecnie refaktoryzuję kod pozwalający stworzyć potok w oparciu wyłącznie o tf. Wewnętrze problemy Keras z warstwą tf.keras.layers.Normalization opóźniły etap utworzenia sieci w kontenerze z obsługą Rest API.
