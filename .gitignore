@@ -133,3 +133,4 @@ dmypy.json
 *.png
 
 proba_Kerac/
+saved_model/
