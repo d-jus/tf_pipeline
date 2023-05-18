@@ -2,9 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+data_raw.xlsx
 # C extensions
 *.so
+
+my_tools.py
+my_tools_alfa.py
 
 # Distribution / packaging
 .Python
